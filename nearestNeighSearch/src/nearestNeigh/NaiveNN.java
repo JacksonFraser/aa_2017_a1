@@ -10,9 +10,11 @@ import java.util.List;
  * @author Jeffrey, Youhan
  */
 public class NaiveNN implements NearestNeigh{
+	
 
     @Override
     public void buildIndex(List<Point> points) {
+    	System.out.println("lkjasdhfkljhsfd");
         // To be implemented.
     	for (int i = 0; i < points.size(); ++i) {
     		System.out.println(i);
