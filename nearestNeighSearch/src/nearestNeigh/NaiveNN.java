@@ -1,5 +1,6 @@
 package nearestNeigh;
 
+import java.awt.Point;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,6 +14,9 @@ public class NaiveNN implements NearestNeigh{
     @Override
     public void buildIndex(List<Point> points) {
         // To be implemented.
+    	for (int i = 0; i < points.size(); ++i) {
+    		System.out.println(i);
+    	}
     }
 
     @Override
