@@ -10,27 +10,33 @@ import java.util.List;
  * @author Jeffrey, Youhan
  */
 public class NaiveNN implements NearestNeigh{
-	
+	List nodesList = new ArrayList<E>();
 
     @Override
     public void buildIndex(List<Point> points) {
-    	System.out.println("lkjasdhfkljhsfd");
-        // To be implemented.
-    	for (int i = 0; i < points.size(); ++i) {
-    		System.out.println(i);
-    	}
+    	nodesList.add(points);
     }
 
     @Override
     public List<Point> search(Point searchTerm, int k) {
-        // To be implemented.
-        return new ArrayList<Point>();
+    	ArrayList<Point> searchList;
+        for(int i = 0; i < nodesList.size(); ++i) {
+        	if(nodesList.get(i) == searchTerm) {
+        		searchList.add(searchTerm);
+        	}
+        }
+        return searchList;
     }
 
     @Override
     public boolean addPoint(Point point) {
-        // To be implemented.
-        return false;
+        for(int i = 0; i < nodesList.size(); ++i) {
+        	if(nodesList.get(i) == point) {
+        		return false
+        	}
+        }
+        nodesList.add(point);
+        return return true;
     }
 
     @Override
