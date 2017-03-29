@@ -42,7 +42,8 @@ public class NaiveNN implements NearestNeigh{
     @Override
     public boolean deletePoint(Point point) {
     	for(int i = 0; i < nodesList.size(); ++i) {
-        	if(nodesList.get(i) == point) {
+        	if(nodesList.get(i).cat == point.cat && nodesList.get(i).id == point.id
+        			&& nodesList.get(i).lat == point.lat && nodesList.get(i).lon == point.lon) {
         		nodesList.remove(i);
         		return true;
         	}
