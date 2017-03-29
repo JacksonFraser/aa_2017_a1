@@ -1,6 +1,5 @@
 package nearestNeigh;
 
-import java.awt.Point;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,44 +9,54 @@ import java.util.List;
  * @author Jeffrey, Youhan
  */
 public class NaiveNN implements NearestNeigh{
-	List nodesList = new ArrayList<E>();
-
+	List<Point> nodesList = new ArrayList<Point>();
     @Override
     public void buildIndex(List<Point> points) {
-    	nodesList.add(points);
+        for(int i = 0; i < points.size(); ++i) {
+        	nodesList.add(points.get(i));
+        }
     }
 
     @Override
     public List<Point> search(Point searchTerm, int k) {
-    	ArrayList<Point> searchList;
+    	List<Point> result = new ArrayList<Point>();
         for(int i = 0; i < nodesList.size(); ++i) {
         	if(nodesList.get(i) == searchTerm) {
-        		searchList.add(searchTerm);
+        		result.add(nodesList.get(i));
         	}
         }
-        return searchList;
+        return result;
     }
 
     @Override
     public boolean addPoint(Point point) {
-        for(int i = 0; i < nodesList.size(); ++i) {
+    	for(int i = 0; i < nodesList.size(); ++i) {
         	if(nodesList.get(i) == point) {
-        		return false
+        		return false;
         	}
-        }
+    	}
         nodesList.add(point);
-        return return true;
+        return true;
     }
 
     @Override
     public boolean deletePoint(Point point) {
-        // To be implemented.
+    	for(int i = 0; i < nodesList.size(); ++i) {
+        	if(nodesList.get(i) == point) {
+        		nodesList.remove(i);
+        		return true;
+        	}
+    	}
         return false;
     }
 
     @Override
     public boolean isPointIn(Point point) {
-        // To be implemented.
+    	for(int i = 0; i < nodesList.size(); ++i) {
+        	if(nodesList.get(i) == point) {
+        		return true;
+        	}
+    	}
         return false;
     }
 
