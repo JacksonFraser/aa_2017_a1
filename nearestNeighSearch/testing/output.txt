@@ -1,9 +1,0 @@
-Delete point failed.
-Delete point failed.
-false
-Add point failed.
-false
-Add point failed.
-Delete point failed.
-false
-false

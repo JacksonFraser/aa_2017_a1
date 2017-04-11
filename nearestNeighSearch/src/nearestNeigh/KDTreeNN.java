@@ -11,20 +11,37 @@ import java.util.List;
  * @author Jeffrey, Youhan
  */
 public class KDTreeNN implements NearestNeigh {
-	protected Node root;
-
+	protected Node eduRoot;
+	protected Node hosRoot;
+	protected Node resRoot;
+	
+	List<Point> eduPointsList = new ArrayList<Point>();
+	List<Point> hosPointsList = new ArrayList<Point>();
+	List<Point> resPointsList = new ArrayList<Point>();
 	public KDTreeNN() {
-		root = null;
+		eduRoot = null;
+		hosRoot = null;
+		resRoot = null;
 	}
 
 	@Override
 	public void buildIndex(List<Point> points) {
 		String axis = "lon";
-		root = buildTree(points,axis);
-		System.out.println(root.data);
-		System.out.println(root.left.data);
-		System.out.println(root.left.left.data);
-		System.out.println(root.left.right.data);
+		for(int i = 0; i < points.size(); ++i){
+			if(points.get(i).cat.equals("education"))
+				eduPointsList.add(points.get(i));
+			if(points.get(i).cat.equals("hospital"))
+				hosPointsList.add(points.get(i));
+			if(points.get(i).cat.equals("restaurant"))
+				resPointsList.add(points.get(i));
+			
+		}
+		eduRoot = buildTree(eduPointsList,axis);
+		hosRoot = buildTree(hosPointsList,axis);
+		resRoot = buildTree(resPointsList, axis);
+		System.out.println(eduRoot.data);
+		System.out.println(hosRoot.data);
+		System.out.println(resRoot.data);
 		
 	}
 
@@ -108,7 +125,12 @@ public class KDTreeNN implements NearestNeigh {
 	}
 
 	public int findMedian(List<Point> sortedList) {
-		int median = sortedList.size() / 2;
+		int median = 0;
+		if(sortedList.size() % 2 == 0){
+			median = sortedList.size() / 2;
+			median++;
+		}
+		median = sortedList.size() / 2;
 
 		return median;
 	}
