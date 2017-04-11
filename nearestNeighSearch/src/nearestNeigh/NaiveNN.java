@@ -41,8 +41,6 @@ public class NaiveNN implements NearestNeigh {
 		for(int i = 0; i < k; ++i) {
 			result.add(correctCat.get(i));
 		}
-		System.out.println(result.size());
-		System.out.println(k);
 
 
 	return result;
@@ -52,7 +50,7 @@ public class NaiveNN implements NearestNeigh {
 	@Override
 	public boolean addPoint(Point point) {
 		for (int i = 0; i < nodesList.size(); ++i) {
-			if (nodesList.get(i).id.equals(point.id)) {
+			if (nodesList.get(i).equals(point)) {
 				return false;
 			}
 		}
@@ -63,7 +61,7 @@ public class NaiveNN implements NearestNeigh {
 	@Override
 	public boolean deletePoint(Point point) {
 		for (int i = 0; i < nodesList.size(); ++i) {
-			if (nodesList.get(i).id.equals(point.id)) {
+			if (nodesList.get(i).equals(point)) {
 				nodesList.remove(i);
 				return true;
 			}
@@ -75,7 +73,7 @@ public class NaiveNN implements NearestNeigh {
 	@Override
 	public boolean isPointIn(Point point) {
 		for (int i = 0; i < nodesList.size(); ++i) {
-			if (nodesList.get(i).id.equals(point.id)) {
+			if (nodesList.get(i).equals(point)) {
 				return true;
 			}
 		}
