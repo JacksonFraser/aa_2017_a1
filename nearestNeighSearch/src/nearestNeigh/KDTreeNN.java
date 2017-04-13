@@ -14,10 +14,14 @@ public class KDTreeNN implements NearestNeigh {
 	protected Node eduRoot;
 	protected Node hosRoot;
 	protected Node resRoot;
-	
+
 	List<Point> eduPointsList = new ArrayList<Point>();
 	List<Point> hosPointsList = new ArrayList<Point>();
 	List<Point> resPointsList = new ArrayList<Point>();
+	Category edu = Category.EDUCATION;
+	Category hos = Category.HOSPITAL;
+	Category res = Category.RESTAURANT;
+
 	public KDTreeNN() {
 		eduRoot = null;
 		hosRoot = null;
@@ -27,48 +31,36 @@ public class KDTreeNN implements NearestNeigh {
 	@Override
 	public void buildIndex(List<Point> points) {
 		String axis = "lon";
-		Category edu = Category.EDUCATION;
-		Category hos = Category.HOSPITAL;
-		Category res = Category.RESTAURANT;
-		
-		for(int i = 0; i < points.size(); ++i){
-			if(points.get(i).cat.equals(edu))
+
+		for (int i = 0; i < points.size(); ++i) {
+			if (points.get(i).cat.equals(edu))
 				eduPointsList.add(points.get(i));
-			if(points.get(i).cat.equals(hos))
+			if (points.get(i).cat.equals(hos))
 				hosPointsList.add(points.get(i));
-			if(points.get(i).cat.equals(res))
+			if (points.get(i).cat.equals(res))
 				resPointsList.add(points.get(i));
-			
+
 		}
-		eduRoot = buildTree(eduPointsList,axis);
-		hosRoot = buildTree(hosPointsList,axis);
+		eduRoot = buildTree(eduPointsList, axis);
+		hosRoot = buildTree(hosPointsList, axis);
 		resRoot = buildTree(resPointsList, axis);
-		System.out.println(eduRoot.data.cat);
-		System.out.println(hosRoot.data.cat);
-		System.out.println(resRoot.data.cat);
-		
+
 	}
 
 	Node buildTree(List<Point> points, String axis) {
-		List<Point> sortedPoints = sortPoints(points, axis);
-		if(axis.equals("lon")){
-			axis = "lat";
-		}
-		else {
-			axis = "lon";
-		}
+		List<Point> sortedPoints = sortPoints(points, changeAxis(axis));
 		Node n = new Node();
 		Node right = new Node();
 		Node left = new Node();
 		int median = findMedian(sortedPoints);
-		n.data = sortedPoints.get(median);
+		n.point = sortedPoints.get(median);
 		n.left = null;
 		n.right = null;
 		if (median > 0) {
-			left = buildTree(sortedPoints.subList(0, median),axis);
+			left = buildTree(sortedPoints.subList(0, median), changeAxis(axis));
 		}
-		if(median+1 < points.size()){
-			right = buildTree(sortedPoints.subList(median+1, points.size()),axis);
+		if (median + 1 < points.size()) {
+			right = buildTree(sortedPoints.subList(median + 1, points.size()), changeAxis(axis));
 		}
 		n.setLeft(left);
 		n.setRight(right);
@@ -83,6 +75,19 @@ public class KDTreeNN implements NearestNeigh {
 
 	@Override
 	public boolean addPoint(Point point) {
+		String axis = "lon";
+		if (point.cat.equals(edu)) {
+			eduRoot = insert(point, eduRoot,axis);
+			return true;
+		}
+		if (point.cat.equals(hos)) {
+			hosRoot = insert(point, hosRoot,axis);
+			return true;
+		}
+		if (point.cat.equals(res)) {
+			resRoot = insert(point, resRoot,axis);
+			return true;
+		}
 		return false;
 	}
 
@@ -129,13 +134,36 @@ public class KDTreeNN implements NearestNeigh {
 
 	public int findMedian(List<Point> sortedList) {
 		int median = 0;
-		if(sortedList.size() % 2 == 0){
+		if (sortedList.size() % 2 == 0) {
 			median = sortedList.size() / 2;
 			median++;
 		}
 		median = sortedList.size() / 2;
 
 		return median;
+	}
+
+	public String changeAxis(String axis) {
+		if (axis.equals("lon")) {
+			axis = "lat";
+		} else {
+			axis = "lon";
+		}
+		return axis;
+	}
+
+	public Node insert(Point point, Node root,String axis) {
+		if (root.point == null) {
+			root = new Node();
+			root.point = point;
+			return root;
+		} else if (root.point.lat > point.lat) {
+			root.right = insert(point, root.right, changeAxis(axis));
+		} else if (root.point.lat < point.lat) {
+			root.left = insert(point, root.left,changeAxis(axis));
+		} else {
+		}
+		return root;
 	}
 
 }

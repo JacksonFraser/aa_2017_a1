@@ -1,11 +1,11 @@
 package nearestNeigh;
 public class Node {
-	public Point data;
+	public Point point;
 	public Node left;
 	public Node right;
 	
 	public Node(){
-		this.data = data;
+		this.point = point;
 		this.left = left;
 		this.right = right;
 		
