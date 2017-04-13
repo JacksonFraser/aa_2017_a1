@@ -27,21 +27,25 @@ public class KDTreeNN implements NearestNeigh {
 	@Override
 	public void buildIndex(List<Point> points) {
 		String axis = "lon";
+		Category edu = Category.EDUCATION;
+		Category hos = Category.HOSPITAL;
+		Category res = Category.RESTAURANT;
+		
 		for(int i = 0; i < points.size(); ++i){
-			if(points.get(i).cat.equals("education"))
+			if(points.get(i).cat.equals(edu))
 				eduPointsList.add(points.get(i));
-			if(points.get(i).cat.equals("hospital"))
+			if(points.get(i).cat.equals(hos))
 				hosPointsList.add(points.get(i));
-			if(points.get(i).cat.equals("restaurant"))
+			if(points.get(i).cat.equals(res))
 				resPointsList.add(points.get(i));
 			
 		}
 		eduRoot = buildTree(eduPointsList,axis);
 		hosRoot = buildTree(hosPointsList,axis);
 		resRoot = buildTree(resPointsList, axis);
-		System.out.println(eduRoot.data);
-		System.out.println(hosRoot.data);
-		System.out.println(resRoot.data);
+		System.out.println(eduRoot.data.cat);
+		System.out.println(hosRoot.data.cat);
+		System.out.println(resRoot.data.cat);
 		
 	}
 
@@ -68,7 +72,6 @@ public class KDTreeNN implements NearestNeigh {
 		}
 		n.setLeft(left);
 		n.setRight(right);
-
 		return n;
 
 	}
