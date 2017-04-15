@@ -10,17 +10,18 @@ public class Node {
 	public Node parent;
 	boolean isright;
 	boolean isLeaf;
+	int level;
 	public Node(){
 		point = this.point;
 		parent =null;
 		leftChild=null;
 		rightChild=null;
 		this.isLeaf = isLeaf;
+		this.level = level;
 		
 	}
 	public void setleftChild(Node leftChild){
-		this.leftChild=leftChild;
-		
+		this.leftChild=leftChild;	
 	}
 	public void setisright(boolean isright) {
 		this.isright = isright;
@@ -42,6 +43,9 @@ public class Node {
 	}
 	public Node rightChild(){
 		return rightChild;
+	}
+	public void setlevel(int level){
+		this.level=level;	
 	}
 	
 	
