@@ -14,7 +14,6 @@ public class KDTreeNN implements NearestNeigh {
 	protected Node eduRoot;
 	protected Node hosRoot;
 	protected Node resRoot;
-	
 
 	List<Point> eduPointsList = new ArrayList<Point>();
 	List<Point> hosPointsList = new ArrayList<Point>();
@@ -58,11 +57,14 @@ public class KDTreeNN implements NearestNeigh {
 		n.point = sortedPoints.get(median);
 		n.left = null;
 		n.right = null;
+		if(median == 0){
+			return n;
+		}
 		if (median > 0) {
 			left = buildTree(sortedPoints.subList(0, median), changeAxis(axis));
 		}
-		if (median + 1 < points.size()) {
-			right = buildTree(sortedPoints.subList(median + 1, points.size()), changeAxis(axis));
+		if (median  < sortedPoints.size()) {
+			right = buildTree(sortedPoints.subList(median , sortedPoints.size()), changeAxis(axis));
 		}
 		n.setLeft(left);
 		n.setRight(right);
@@ -77,19 +79,16 @@ public class KDTreeNN implements NearestNeigh {
 		Node hosNode = hosRoot;
 		Node resNode = resRoot;
 		if (searchTerm.cat.equals(edu)) {
-			eduNode = findLeaf(searchTerm, eduNode, axis);
-			closestPoints.add(eduNode.point);
+			findLeaf(searchTerm, eduNode, axis);
 		}
 		if (searchTerm.cat.equals(hos)) {
-			hosNode = findLeaf(searchTerm, hosNode, axis);
-			closestPoints.add(hosNode.point);
+			findLeaf(searchTerm, hosNode, axis);
 		}
 		if (searchTerm.cat.equals(res)) {
-			resNode = findLeaf(searchTerm, resNode, axis);
-			closestPoints.add(resNode.point);
+			findLeaf(searchTerm, resNode, axis);
 		}
-		System.out.println(closestPoints.get(0));
-
+		System.out.println("this is the closest point " + closestPoints.get(0).id);
+		dist(searchTerm);
 		return closestPoints;
 	}
 
@@ -124,16 +123,15 @@ public class KDTreeNN implements NearestNeigh {
 	@Override
 	public boolean isPointIn(Point point) {
 		if (point.cat.equals(edu)) {
-			
+
 		}
 		if (point.cat.equals(hos)) {
 			inorder(hosRoot);
 		}
 		if (point.cat.equals(res)) {
 			inorder(resRoot);
-		}		
-		
-		
+		}
+
 		return false;
 	}
 
@@ -170,10 +168,6 @@ public class KDTreeNN implements NearestNeigh {
 
 	public int findMedian(List<Point> sortedList) {
 		int median = 0;
-		if (sortedList.size() % 2 == 0) {
-			median = sortedList.size() / 2;
-			median++;
-		}
 		median = sortedList.size() / 2;
 
 		return median;
@@ -195,17 +189,17 @@ public class KDTreeNN implements NearestNeigh {
 
 		}
 		if (axis.equals("lat")) {
-			if (root.point.lat > point.lat) {
+			if (point.lat > root.point.lat) {
 				root.right = insert(point, root.right, changeAxis(axis));
-			} else if (root.point.lat < point.lat) {
+			} else if (point.lat < root.point.lat) {
 				root.left = insert(point, root.left, changeAxis(axis));
 			} else {
 			}
 			return root;
 		} else {
-			if (root.point.lon > point.lon) {
+			if (point.lon > root.point.lon) {
 				root.right = insert(point, root.right, changeAxis(axis));
-			} else if (root.point.lon < point.lon) {
+			} else if (point.lon < root.point.lon) {
 				root.left = insert(point, root.left, changeAxis(axis));
 			} else {
 			}
@@ -213,34 +207,122 @@ public class KDTreeNN implements NearestNeigh {
 		}
 	}
 
-	public Node findLeaf(Point point, Node root, String axis) {
+	public void findLeaf(Point point, Node root, String axis) {
+		System.out.println(i + " visited " + root.point.id);
+		i++;
 		if (root.left.point == null && root.right.point == null) {
-			closestPoints.add(root.point);
-			return root;
+			System.out.println("leaf node id " + root.point.id);
+			System.out.println();
+			if (!closestPoints.isEmpty()) {
+				closestPoints.set(0, root.point);
+				return;
+			} else {
+				closestPoints.add(root.point);
+				return;
+			}
+
+		}
+		if (!closestPoints.isEmpty()) {
+			if (point.distTo(root.point) < point.distTo(closestPoints.get(0)))
+				closestPoints.set(0, root.point);
+
 		}
 		if (axis.equals("lat")) {
-			if (root.point.lat > point.lat) {
-				root.right = findLeaf(point, root.right, changeAxis(axis));
-			} else if (root.point.lat < point.lat) {
-				root.left = findLeaf(point, root.left, changeAxis(axis));
-			} else {
-			}
-			return root;
-		} else {
-			if (root.point.lon > point.lon) {
-				root.right = findLeaf(point, root.right, changeAxis(axis));
-			} else if (root.point.lon < point.lon) {
-				root.left = findLeaf(point, root.left, changeAxis(axis));
-			} else {
-			}
-			return root;
+			searchLat(point, root, axis);
 		}
+		if (axis.equals("lon"))
+			searchLon(point, root, axis);
 	}
-	protected void inorder(Node root){
-		if(root.point == null)
+
+	public Node searchLat(Point point, Node root, String axis) {
+		if (point.lat > root.point.lat) {
+			if (root.right.point != null) {
+				findLeaf(point, root.right, changeAxis(axis));
+				if (!closestPoints.isEmpty()) {
+					if (root.left.point != null) {
+						if (point.distTo(closestPoints.get(0)) > point.distTo(root.left.point)) {
+							findLeaf(point, root.left, axis);
+						}
+					}
+				}
+			}
+		} else if (point.lat < root.point.lat) {
+			if (root.left.point != null) {
+				findLeaf(point, root.left, changeAxis(axis));
+				if (!closestPoints.isEmpty()) {
+					if (root.right.point != null) {
+						if (point.distTo(closestPoints.get(0)) > point.distTo(root.right.point)) {
+							findLeaf(point, root.right, axis);
+						}
+					}
+				}
+			}
+		} else {
+		}
+		return root;
+	}
+
+	public Node searchLon(Point point, Node root, String axis) {
+		if (point.lon > root.point.lon) {
+			if (root.right.point != null) {
+				findLeaf(point, root.right, changeAxis(axis));
+				if (!closestPoints.isEmpty()) {
+					if (root.left.point != null) {
+						if (point.distTo(closestPoints.get(0)) > point.distTo(root.left.point)) {
+							findLeaf(point, root.left, axis);
+						}
+					}
+				}
+			}
+
+		} else if (point.lon < root.point.lon) {
+			if (root.left.point != null) {
+				findLeaf(point, root.left, changeAxis(axis));
+				if (!closestPoints.isEmpty()) {
+					if (root.right.point != null) {
+						if (point.distTo(closestPoints.get(0)) > point.distTo(root.right.point)) {
+							findLeaf(point, root.right, axis);
+						}
+					}
+				}
+			}
+
+		} else {
+		}
+		return root;
+	}
+
+	protected void inorder(Node root) {
+		if (root.point == null)
 			return;
 		inorder(root.left);
 		inorder(root.right);
-		
+
 	}
+
+	public void dist(Point point) {
+		for (int i = 0; i < resPointsList.size(); ++i) {
+			if (resPointsList.get(i).id.equals("id87")) {
+				System.out.println("distance to 87 " + point.distTo(resPointsList.get(i)));
+			}
+			if (resPointsList.get(i).id.equals("id925")) {
+				System.out.println("distance to 925 " + point.distTo(resPointsList.get(i)));
+			}
+			if (resPointsList.get(i).id.equals("id368")) {
+				System.out.println("distance to 368 " + point.distTo(resPointsList.get(i)));
+			}
+			if (resPointsList.get(i).id.equals("id29")) {
+
+				System.out.println("distance to 29 " + point.distTo(resPointsList.get(i)));
+			}
+			if (resPointsList.get(i).id.equals("id657")) {
+				System.out.println("distance to 657 " + point.distTo(resPointsList.get(i)));
+			}
+
+		}
+		System.out.println();
+		System.out.println();
+		System.out.println();
+	}
+
 }
