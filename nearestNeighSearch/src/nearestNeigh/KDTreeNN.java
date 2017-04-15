@@ -57,14 +57,11 @@ public class KDTreeNN implements NearestNeigh {
 		n.point = sortedPoints.get(median);
 		n.left = null;
 		n.right = null;
-		if(median == 0){
-			return n;
-		}
 		if (median > 0) {
 			left = buildTree(sortedPoints.subList(0, median), changeAxis(axis));
 		}
-		if (median  < sortedPoints.size()) {
-			right = buildTree(sortedPoints.subList(median , sortedPoints.size()), changeAxis(axis));
+		if (median + 1 < points.size()) {
+			right = buildTree(sortedPoints.subList(median + 1, points.size()), changeAxis(axis));
 		}
 		n.setLeft(left);
 		n.setRight(right);
@@ -78,6 +75,7 @@ public class KDTreeNN implements NearestNeigh {
 		Node eduNode = eduRoot;
 		Node hosNode = hosRoot;
 		Node resNode = resRoot;
+		
 		if (searchTerm.cat.equals(edu)) {
 			findLeaf(searchTerm, eduNode, axis);
 		}
@@ -88,7 +86,7 @@ public class KDTreeNN implements NearestNeigh {
 			findLeaf(searchTerm, resNode, axis);
 		}
 		System.out.println("this is the closest point " + closestPoints.get(0).id);
-		dist(searchTerm);
+		System.out.println(closestPoints.size());
 		return closestPoints;
 	}
 
@@ -208,23 +206,23 @@ public class KDTreeNN implements NearestNeigh {
 	}
 
 	public void findLeaf(Point point, Node root, String axis) {
-		System.out.println(i + " visited " + root.point.id);
+		System.out.println(i+" visited "+root.point.id);
 		i++;
 		if (root.left.point == null && root.right.point == null) {
-			System.out.println("leaf node id " + root.point.id);
-			System.out.println();
 			if (!closestPoints.isEmpty()) {
-				closestPoints.set(0, root.point);
-				return;
-			} else {
+				if (point.distTo(root.point) < point.distTo(closestPoints.get(0))) {
+					closestPoints.set(0, root.point);
+				}
+			} else
 				closestPoints.add(root.point);
-				return;
-			}
+			return;
 
 		}
 		if (!closestPoints.isEmpty()) {
-			if (point.distTo(root.point) < point.distTo(closestPoints.get(0)))
+			if (point.distTo(root.point) < point.distTo(closestPoints.get(0))){
 				closestPoints.set(0, root.point);
+				System.out.println("new closest is " + root.point.id);
+			}
 
 		}
 		if (axis.equals("lat")) {
@@ -240,7 +238,17 @@ public class KDTreeNN implements NearestNeigh {
 				findLeaf(point, root.right, changeAxis(axis));
 				if (!closestPoints.isEmpty()) {
 					if (root.left.point != null) {
-						if (point.distTo(closestPoints.get(0)) > point.distTo(root.left.point)) {
+						
+						//return the x axis difference between the current node
+						//and the point we're searching for
+						double xDist = Math.abs(root.point.lat - point.lat);
+						
+						/* if the distance between the point we're searching for and the current
+						 * best distance is greater than xDist, then go 
+						 * down the path we didn't previously visit
+						 * 
+						 *  */ 
+						if (point.distTo(closestPoints.get(0)) > xDist) {
 							findLeaf(point, root.left, axis);
 						}
 					}
@@ -251,7 +259,8 @@ public class KDTreeNN implements NearestNeigh {
 				findLeaf(point, root.left, changeAxis(axis));
 				if (!closestPoints.isEmpty()) {
 					if (root.right.point != null) {
-						if (point.distTo(closestPoints.get(0)) > point.distTo(root.right.point)) {
+						double xDist = Math.abs(root.point.lat - point.lat);
+						if (point.distTo(closestPoints.get(0)) > xDist) {
 							findLeaf(point, root.right, axis);
 						}
 					}
@@ -268,7 +277,7 @@ public class KDTreeNN implements NearestNeigh {
 				findLeaf(point, root.right, changeAxis(axis));
 				if (!closestPoints.isEmpty()) {
 					if (root.left.point != null) {
-						if (point.distTo(closestPoints.get(0)) > point.distTo(root.left.point)) {
+						if (point.distTo(closestPoints.get(0)) > root.point.lon - point.lon) {
 							findLeaf(point, root.left, axis);
 						}
 					}
@@ -280,7 +289,7 @@ public class KDTreeNN implements NearestNeigh {
 				findLeaf(point, root.left, changeAxis(axis));
 				if (!closestPoints.isEmpty()) {
 					if (root.right.point != null) {
-						if (point.distTo(closestPoints.get(0)) > point.distTo(root.right.point)) {
+						if (point.distTo(closestPoints.get(0)) > root.point.lon - point.lon) {
 							findLeaf(point, root.right, axis);
 						}
 					}
@@ -300,29 +309,5 @@ public class KDTreeNN implements NearestNeigh {
 
 	}
 
-	public void dist(Point point) {
-		for (int i = 0; i < resPointsList.size(); ++i) {
-			if (resPointsList.get(i).id.equals("id87")) {
-				System.out.println("distance to 87 " + point.distTo(resPointsList.get(i)));
-			}
-			if (resPointsList.get(i).id.equals("id925")) {
-				System.out.println("distance to 925 " + point.distTo(resPointsList.get(i)));
-			}
-			if (resPointsList.get(i).id.equals("id368")) {
-				System.out.println("distance to 368 " + point.distTo(resPointsList.get(i)));
-			}
-			if (resPointsList.get(i).id.equals("id29")) {
-
-				System.out.println("distance to 29 " + point.distTo(resPointsList.get(i)));
-			}
-			if (resPointsList.get(i).id.equals("id657")) {
-				System.out.println("distance to 657 " + point.distTo(resPointsList.get(i)));
-			}
-
-		}
-		System.out.println();
-		System.out.println();
-		System.out.println();
-	}
 
 }
