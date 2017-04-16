@@ -23,14 +23,14 @@ public class TestDataGen {
 		t.printNaiveBuildTimes(avgBuildTimes);
 
 		// Seach test results
-		//List<Long> smallKAvg = t.testNaiveSearch(10);
-		//List<Long> mediumKAvg = t.testNaiveSearch(20);
-		//List<Long> largeKAvg = t.testNaiveSearch(30);
+		List<Long> smallKAvg = t.testNaiveSearch(10);
+		List<Long> mediumKAvg = t.testNaiveSearch(20);
+		List<Long> largeKAvg = t.testNaiveSearch(30);
 		System.out.println();
 		System.out.println("*****NAIVE SEARCH TESTS*****");
-		//t.printSmallKSearch(smallKAvg);
-		//t.printMediumKSearch(mediumKAvg);
-		//t.printLargeKSearch(largeKAvg);
+		t.printSmallKSearch(smallKAvg);
+		t.printMediumKSearch(mediumKAvg);
+		t.printLargeKSearch(largeKAvg);
 
 		// delete point result
 		List<Long> avgDelTimes = t.testNaiveDeletePoint();
