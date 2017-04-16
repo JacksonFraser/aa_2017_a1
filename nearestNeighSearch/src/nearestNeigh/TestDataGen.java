@@ -31,6 +31,7 @@ public class TestDataGen {
 		t.printSmallKSearch(smallKAvg);
 		t.printMediumKSearch(mediumKAvg);
 		t.printLargeKSearch(largeKAvg);
+		t.writeToFile("nearestNeighSearch/src/sampleData50.txt", 50);
 
 		// delete point result
 		List<Long> avgDelTimes = t.testNaiveDeletePoint();
