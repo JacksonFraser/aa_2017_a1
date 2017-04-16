@@ -41,8 +41,8 @@ public class KDTreeNN implements NearestNeigh {
 				resPointsList.add(points.get(i));
 
 		}
-		eduRoot = buildTree(eduPointsList, axis);
-		hosRoot = buildTree(hosPointsList, axis);
+	//	eduRoot = buildTree(eduPointsList, axis);
+		//hosRoot = buildTree(hosPointsList, axis);
 		resRoot = buildTree(resPointsList, axis);
 
 	}
@@ -85,8 +85,6 @@ public class KDTreeNN implements NearestNeigh {
 		if (searchTerm.cat.equals(res)) {
 			findLeaf(searchTerm, resNode, axis);
 		}
-		System.out.println("this is the closest point " + closestPoints.get(0).id);
-		System.out.println(closestPoints.size());
 		return closestPoints;
 	}
 
@@ -209,7 +207,6 @@ public class KDTreeNN implements NearestNeigh {
 		i++;
 		if (!closestPoints.isEmpty()) {
 			if (point.distTo(root.point) < point.distTo(closestPoints.get(0))){
-				System.out.println("is less");
 				closestPoints.set(0, root.point);
 			}
 			

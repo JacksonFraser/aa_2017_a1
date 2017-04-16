@@ -23,23 +23,30 @@ public class TestDataGen {
 		t.printNaiveBuildTimes(avgBuildTimes);
 
 		// Seach test results
-		List<Long> smallKAvg = t.testNaiveSearch(10);
-		List<Long> mediumKAvg = t.testNaiveSearch(20);
-		List<Long> largeKAvg = t.testNaiveSearch(30);
+		//List<Long> smallKAvg = t.testNaiveSearch(10);
+		//List<Long> mediumKAvg = t.testNaiveSearch(20);
+		//List<Long> largeKAvg = t.testNaiveSearch(30);
 		System.out.println();
 		System.out.println("*****NAIVE SEARCH TESTS*****");
-		t.printSmallKSearch(smallKAvg);
-		t.printMediumKSearch(mediumKAvg);
-		t.printLargeKSearch(largeKAvg);
-		t.writeToFile("nearestNeighSearch/src/sampleData50.txt", 50);
+		//t.printSmallKSearch(smallKAvg);
+		//t.printMediumKSearch(mediumKAvg);
+		//t.printLargeKSearch(largeKAvg);
+		//t.writeToFile("nearestNeighSearch/src/sampleData50.txt", 50);
 
 		// delete point result
 		List<Long> avgDelTimes = t.testNaiveDeletePoint();
 		t.printNaiveDelTimes(avgDelTimes);
-		
-
+		//List<Long> avgKdBuildTimes = t.testKdtreeBuildIndex();
+		//t.printKdtreeBuildTimes(avgKdBuildTimes);
+		List<Long>avgKdSearch = t.testKdtreeSearch(10);
+		t.printKdSearch(avgKdSearch);
 	}
 
+	/*
+	 * Creates the sample data file
+	 * fileName will create a file of this name
+	 * size is the number of points to create 
+	 * */ 
 	public void writeToFile(String fileName, int size) {
 		double yMean = 145.0f;
 		double yVariance = 8.0f;
@@ -64,7 +71,8 @@ public class TestDataGen {
 			System.out.println("Error writing to file '" + fileName + "'");
 		}
 	}
-
+	
+	//creates the points that are inside the given file
 	public List<Point> createPointsList(String fileName) {
 		String line = null;
 		List<Point> pointsList = new ArrayList<Point>();
@@ -91,6 +99,7 @@ public class TestDataGen {
 
 	}
 
+	//tests NaiveNN buildIndex
 	public List<Long> testNaiveBuildIndex() {
 		List<Long> avgTimes = new ArrayList<Long>();
 		TestDataGen t = new TestDataGen();
@@ -137,6 +146,7 @@ public class TestDataGen {
 		return avgTimes;
 	}
 
+	//tests NaiveNN search
 	public List<Long> testNaiveSearch(int k) {
 		List<Long> avgTimes = new ArrayList<Long>();
 		TestDataGen t = new TestDataGen();
@@ -183,7 +193,7 @@ public class TestDataGen {
 
 		return avgTimes;
 	}
-
+	//Tests NaiveNN Delete
 	public List<Long> testNaiveDeletePoint() {
 		List<Long> avgTimes = new ArrayList<Long>();
 		TestDataGen t = new TestDataGen();
@@ -222,6 +232,96 @@ public class TestDataGen {
 		smallTotal = smallTotal / 20;
 		mediumTotal = mediumTotal / 20;
 		largeTotal = largeTotal / 20;
+
+		avgTimes.add(smallTotal);
+		avgTimes.add(mediumTotal);
+		avgTimes.add(largeTotal);
+
+		return avgTimes;
+	}
+	public List<Long> testKdtreeBuildIndex() {
+		List<Long> avgTimes = new ArrayList<Long>();
+		TestDataGen t = new TestDataGen();
+		List<Point> smallPointsList = new ArrayList<Point>();
+		List<Point> mediumPointsList = new ArrayList<Point>();
+		List<Point> largePointsList = new ArrayList<Point>();
+		smallPointsList = t.createPointsList("nearestNeighSearch/src/sampleData5000.txt");
+	//	mediumPointsList = t.createPointsList("nearestNeighSearch/src/sampleData10000.txt");
+		//largePointsList = t.createPointsList("nearestNeighSearch/src/sampleData20000.txt");
+		long smallTotal = 0;
+		long mediumTotal = 0;
+		long largeTotal = 0;
+		KDTreeNN smallKdtree = new KDTreeNN();
+		for (int i = 0; i < 20; i++) {
+
+			long smallStart = System.nanoTime();
+			smallKdtree.buildIndex(smallPointsList);
+			long smallEnd = System.nanoTime();
+
+			smallTotal = smallTotal + (smallEnd - smallStart);
+/*
+			long mediumStart = System.nanoTime();
+			mediumNaive.buildIndex(mediumPointsList);
+			long mediumEnd = System.nanoTime();
+
+			mediumTotal = mediumTotal + (mediumEnd - mediumStart);
+
+			long largeStart = System.nanoTime();
+			largeNaive.buildIndex(largePointsList);
+			long largeEnd = System.nanoTime();
+
+			largeTotal = largeTotal + (largeEnd - largeStart);
+	*/
+		}
+		smallTotal = smallTotal / 20;
+	//	mediumTotal = mediumTotal / 20;
+		//largeTotal = largeTotal / 20;
+
+		avgTimes.add(smallTotal);
+		//avgTimes.add(mediumTotal);
+		//avgTimes.add(largeTotal);
+
+		return avgTimes;
+	}
+	public List<Long> testKdtreeSearch(int k) {
+		List<Long> avgTimes = new ArrayList<Long>();
+		TestDataGen t = new TestDataGen();
+		List<Point> smallPointsList = new ArrayList<Point>();
+		List<Point> mediumPointsList = new ArrayList<Point>();
+		List<Point> largePointsList = new ArrayList<Point>();
+		smallPointsList = t.createPointsList("nearestNeighSearch/src/sampleData5000.txt");
+		mediumPointsList = t.createPointsList("nearestNeighSearch/src/sampleData10000.txt");
+		largePointsList = t.createPointsList("nearestNeighSearch/src/sampleData20000.txt");
+		long smallTotal = 0;
+		long mediumTotal = 0;
+		long largeTotal = 0;
+		KDTreeNN smallkd = new KDTreeNN();
+		KDTreeNN mediumkd = new KDTreeNN();
+		KDTreeNN largekd = new KDTreeNN();
+		smallkd.buildIndex(smallPointsList.subList(0, 1000));
+		mediumkd.buildIndex(mediumPointsList.subList(0, 2000));
+		largekd.buildIndex(largePointsList.subList(0, 3000));
+		for (int i = 0; i < 5; i++) {
+			long smallStart = System.nanoTime();
+			smallkd.search(smallPointsList.get(500), k);
+			long smallEnd = System.nanoTime();
+
+			long mediumStart = System.nanoTime();
+			mediumkd.search(mediumPointsList.get(500), k);
+			long mediumEnd = System.nanoTime();
+
+			long largeStart = System.nanoTime();
+			largekd.search(largePointsList.get(500), k);
+			long largeEnd = System.nanoTime();
+
+			smallTotal = smallTotal + (smallEnd - smallStart);
+			mediumTotal = mediumTotal + (mediumEnd - mediumStart);
+			largeTotal = largeTotal + (largeEnd - largeStart);
+
+		}
+		smallTotal = smallTotal / 5;
+		mediumTotal = mediumTotal / 5;
+		largeTotal = largeTotal / 5;
 
 		avgTimes.add(smallTotal);
 		avgTimes.add(mediumTotal);
@@ -272,5 +372,22 @@ public class TestDataGen {
 		System.out.println("large deletePoint() average time = " + avgDelTimes.get(2));
 		System.out.println();
 	}
+	public void printKdtreeBuildTimes(List<Long>avgBuildTimes) {
+		System.out.println();
+		System.out.println("*****KDTREE BUILD INDEX TESTS*****");
+		System.out.println();
+		System.out.println("small buildIndex() average time = " + avgBuildTimes.get(0));
+		System.out.println();
+	}
+	public void printKdSearch(List<Long> smallKdAvg) {
+		System.out.println();
+		System.out.println("*****KDTREE SEARCH TESTS*****");
+		System.out.println();
+		System.out.println("small list search average time   = " + smallKdAvg.get(0));
+		System.out.println("medium list search average time  = " + smallKdAvg.get(1));
+		System.out.println("large list search average time   = " + smallKdAvg.get(2));
+		System.out.println();
+	}
+	
 
 }

@@ -13,9 +13,7 @@ public class NaiveNN implements NearestNeigh {
 
 	@Override
 	public void buildIndex(List<Point> points) {
-		for (int i = 0; i < points.size(); ++i) {
-			nodesList.add(points.get(i));
-		}
+		nodesList = points;
 	}
 
 	@Override
