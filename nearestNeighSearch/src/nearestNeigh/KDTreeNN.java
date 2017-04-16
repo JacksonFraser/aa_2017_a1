@@ -206,8 +206,14 @@ public class KDTreeNN implements NearestNeigh {
 	}
 
 	public void findLeaf(Point point, Node root, String axis) {
-		System.out.println(i+" visited "+root.point.id);
 		i++;
+		if (!closestPoints.isEmpty()) {
+			if (point.distTo(root.point) < point.distTo(closestPoints.get(0))){
+				System.out.println("is less");
+				closestPoints.set(0, root.point);
+			}
+			
+		}
 		if (root.left.point == null && root.right.point == null) {
 			if (!closestPoints.isEmpty()) {
 				if (point.distTo(root.point) < point.distTo(closestPoints.get(0))) {
@@ -216,13 +222,6 @@ public class KDTreeNN implements NearestNeigh {
 			} else
 				closestPoints.add(root.point);
 			return;
-
-		}
-		if (!closestPoints.isEmpty()) {
-			if (point.distTo(root.point) < point.distTo(closestPoints.get(0))){
-				closestPoints.set(0, root.point);
-				System.out.println("new closest is " + root.point.id);
-			}
 
 		}
 		if (axis.equals("lat")) {
